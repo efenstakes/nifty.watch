@@ -46,7 +46,6 @@ export function handleTransferSingle(event: TransferSingle): void {
     if( !collection ) {
         collection = newCollection(event.address.toString())
     }
-
     collection.totalSales += 1
 
 
@@ -70,7 +69,7 @@ export function handleTransferSingle(event: TransferSingle): void {
 
 
     // activity
-    let activity = new Activity(event.params.id.toString().concat(event.address.toString()))
+    let activity = new Activity(event.params.id.toString().concat(event.block.timestamp.toString()))
     activity.timestamp = event.block.timestamp.plus(event.logIndex)
     activity.collection = event.address.toString()
     activity.wallet = event.params.to.toString()
@@ -88,6 +87,93 @@ export function handleTransferSingle(event: TransferSingle): void {
 }
 
 
+
+
+
+// on transfer
+export function handleTransferBatch(event: TransferBatch): void {
+    const erc1155 = ERC1155.bind(event.address)
+
+    let stats = Stats.load("1")
+
+    if ( !stats ) {
+        stats = newStats()
+    }
+    stats.lastUpdateTime = event.logIndex.plus(event.block.timestamp)
+
+
+    for (let index = 0; index < event.params.ids.length; index++) {
+        const tokenId = event.params.ids[index]
+        const from = event.params.from[index]
+        const to = event.params.to[index]
+        const operator = event.params.operator[index]
+        
+
+        // load nft
+        let nft = NFT.load(tokenId.toString().concat(event.address.toString()))
+        
+        if( !nft ) {
+            nft = newNFT(
+                tokenId.toString().concat(event.address.toString()),
+                tokenId
+            )
+        }
+
+        nft.collection = event.address.toString()
+        nft.tokenId = tokenId
+        nft.approved = null
+        nft.owner = event.params.to.toString()
+        nft.tokenURI = erc1155.uri(tokenId)
+
+        
+        // load collection
+        let collection = Collection.load(event.address.toString())
+        if( !collection ) {
+            collection = newCollection(event.address.toString())
+        }
+        collection.totalSales += 1
+
+
+        // buyer
+        let buyer = Wallet.load(to.toString())
+
+        if( !buyer ) {
+            buyer = newWallet(to.toString())
+        }
+        buyer.totaNFTsOwned += 1
+
+        
+        // seller
+        let seller = Wallet.load(from.toString())
+
+        if( !seller ) {
+            seller = newWallet(from.toString())
+        }
+        seller.totaNFTsSold += 1
+
+
+
+        // activity
+        let activity = new Activity(tokenId.toString().concat(event.block.timestamp.toString()))
+        activity.timestamp = event.block.timestamp.plus(event.logIndex)
+        activity.collection = event.address.toString()
+        activity.wallet = event.params.to.toString()
+        activity.type = event.address.toString() === operator.toString() ? "MINTING" : "TRANSFER"
+
+
+        // save
+        stats.save()
+        nft.save()
+        collection.save()
+        activity.save()
+
+        buyer.save()
+        seller.save()
+        }
+
+    // save
+    stats.save()
+}
 
 export function handleApprovalForAll(event: ApprovalForAll): void {
 
