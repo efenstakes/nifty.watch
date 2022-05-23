@@ -102,6 +102,7 @@ export class Collection extends Entity {
     this.set("tags", Value.fromStringArray(new Array(0)));
     this.set("totalOwners", Value.fromI32(0));
     this.set("totalSales", Value.fromI32(0));
+    this.set("totalApprovals", Value.fromI32(0));
     this.set("totalListedNfts", Value.fromI32(0));
   }
 
@@ -464,6 +465,15 @@ export class Collection extends Entity {
     this.set("totalSales", Value.fromI32(value));
   }
 
+  get totalApprovals(): i32 {
+    let value = this.get("totalApprovals");
+    return value!.toI32();
+  }
+
+  set totalApprovals(value: i32) {
+    this.set("totalApprovals", Value.fromI32(value));
+  }
+
   get totalListedNfts(): i32 {
     let value = this.get("totalListedNfts");
     return value!.toI32();
@@ -491,14 +501,117 @@ export class Collection extends Entity {
   }
 }
 
+export class NFT extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("tokenURI", Value.fromString(""));
+    this.set("collection", Value.fromString(""));
+    this.set("tokenId", Value.fromBigInt(BigInt.zero()));
+    this.set("owner", Value.fromString(""));
+    this.set("totalOwners", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save NFT entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type NFT must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("NFT", id.toString(), this);
+    }
+  }
+
+  static load(id: string): NFT | null {
+    return changetype<NFT | null>(store.get("NFT", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get tokenURI(): string {
+    let value = this.get("tokenURI");
+    return value!.toString();
+  }
+
+  set tokenURI(value: string) {
+    this.set("tokenURI", Value.fromString(value));
+  }
+
+  get collection(): string {
+    let value = this.get("collection");
+    return value!.toString();
+  }
+
+  set collection(value: string) {
+    this.set("collection", Value.fromString(value));
+  }
+
+  get tokenId(): BigInt {
+    let value = this.get("tokenId");
+    return value!.toBigInt();
+  }
+
+  set tokenId(value: BigInt) {
+    this.set("tokenId", Value.fromBigInt(value));
+  }
+
+  get approved(): string | null {
+    let value = this.get("approved");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set approved(value: string | null) {
+    if (!value) {
+      this.unset("approved");
+    } else {
+      this.set("approved", Value.fromString(<string>value));
+    }
+  }
+
+  get owner(): string {
+    let value = this.get("owner");
+    return value!.toString();
+  }
+
+  set owner(value: string) {
+    this.set("owner", Value.fromString(value));
+  }
+
+  get totalOwners(): BigInt {
+    let value = this.get("totalOwners");
+    return value!.toBigInt();
+  }
+
+  set totalOwners(value: BigInt) {
+    this.set("totalOwners", Value.fromBigInt(value));
+  }
+}
+
 export class Wallet extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
 
     this.set("address", Value.fromBytes(Bytes.empty()));
+    this.set("totaNFTsSold", Value.fromI32(0));
     this.set("totaNFTsOwned", Value.fromI32(0));
     this.set("totalCollectionsListed", Value.fromI32(0));
+    this.set("totalApprovalsFrom", Value.fromI32(0));
+    this.set("totalApprovalsTo", Value.fromI32(0));
     this.set("ethInvested", Value.fromBigInt(BigInt.zero()));
   }
 
@@ -536,6 +649,15 @@ export class Wallet extends Entity {
     this.set("address", Value.fromBytes(value));
   }
 
+  get totaNFTsSold(): i32 {
+    let value = this.get("totaNFTsSold");
+    return value!.toI32();
+  }
+
+  set totaNFTsSold(value: i32) {
+    this.set("totaNFTsSold", Value.fromI32(value));
+  }
+
   get totaNFTsOwned(): i32 {
     let value = this.get("totaNFTsOwned");
     return value!.toI32();
@@ -554,6 +676,24 @@ export class Wallet extends Entity {
     this.set("totalCollectionsListed", Value.fromI32(value));
   }
 
+  get totalApprovalsFrom(): i32 {
+    let value = this.get("totalApprovalsFrom");
+    return value!.toI32();
+  }
+
+  set totalApprovalsFrom(value: i32) {
+    this.set("totalApprovalsFrom", Value.fromI32(value));
+  }
+
+  get totalApprovalsTo(): i32 {
+    let value = this.get("totalApprovalsTo");
+    return value!.toI32();
+  }
+
+  set totalApprovalsTo(value: i32) {
+    this.set("totalApprovalsTo", Value.fromI32(value));
+  }
+
   get ethInvested(): BigInt {
     let value = this.get("ethInvested");
     return value!.toBigInt();
@@ -561,5 +701,78 @@ export class Wallet extends Entity {
 
   set ethInvested(value: BigInt) {
     this.set("ethInvested", Value.fromBigInt(value));
+  }
+}
+
+export class Activity extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("collection", Value.fromString(""));
+    this.set("wallet", Value.fromString(""));
+    this.set("type", Value.fromString(""));
+    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Activity entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Activity must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Activity", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Activity | null {
+    return changetype<Activity | null>(store.get("Activity", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get collection(): string {
+    let value = this.get("collection");
+    return value!.toString();
+  }
+
+  set collection(value: string) {
+    this.set("collection", Value.fromString(value));
+  }
+
+  get wallet(): string {
+    let value = this.get("wallet");
+    return value!.toString();
+  }
+
+  set wallet(value: string) {
+    this.set("wallet", Value.fromString(value));
+  }
+
+  get type(): string {
+    let value = this.get("type");
+    return value!.toString();
+  }
+
+  set type(value: string) {
+    this.set("type", Value.fromString(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
   }
 }

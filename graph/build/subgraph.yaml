@@ -16,6 +16,8 @@ dataSources:
         - Stats
         - Collection
         - Wallet
+        - Activity
+        - NFT
       abis:
         - name: NFTCollection
           file: NFTCollection\abis\NFTCollection.json
@@ -35,3 +37,55 @@ dataSources:
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleOwnershipTransferred
       file: NFTCollection\NFTCollection.wasm
+  - kind: ethereum
+    name: ERC721
+    network: ropsten
+    source:
+      abi: ERC721
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Stats
+        - Collection
+        - Wallet
+        - Activity
+        - NFT
+      abis:
+        - name: ERC721
+          file: ERC721\abis\ERC721.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+        - event: Approval(indexed address,indexed address,indexed uint256)
+          handler: handleApproval
+        - event: ApprovalForAll(indexed address,indexed address,bool)
+          handler: handleApprovalForAll
+      file: ERC721\ERC721.wasm
+  - kind: ethereum
+    name: ERC1155
+    network: ropsten
+    source:
+      abi: ERC1155
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Stats
+        - Collection
+        - Wallet
+        - Activity
+        - NFT
+      abis:
+        - name: ERC1155
+          file: ERC1155\abis\ERC1155.json
+      eventHandlers:
+        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleTransferSingle
+        - event: TransferBatch(indexed address,indexed address,indexed address,uint256[],uint256[])
+          handler: handleTransferBatch
+        - event: ApprovalForAll(indexed address,indexed address,bool)
+          handler: handleApprovalForAll
+      file: ERC1155\ERC1155.wasm
