@@ -332,4 +332,20 @@ contract NFTCollection is Ownable {
         return true;
     }
      
+
+
+
+    
+
+
+    /// @notice Put ad time
+    /// @dev Put ad time
+    /// @param _value the eth passed
+    function _calculateAdTime(uint256 _value) internal view returns(uint256) {
+        if ( _value == 0 ) return 0;
+
+        // calculate time now
+        return _value / adFee * 3600;
+    }
+      
 }
