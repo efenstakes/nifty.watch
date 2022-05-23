@@ -178,4 +178,58 @@ contract NFTCollection is Ownable {
     
     
 
+        
+    /// @notice Add listing
+    /// @dev Add listing
+    /// @param _name the collection name
+    /// @param _avatars the collection avatars
+    /// @param _collectionAddress the collection contract address
+    /// @param _goingLiveOn the date collection goes live
+    /// @param _mintingOn the date minting starts for collection
+    /// @param _nftsTotal the total nfts in the collection
+    /// @param _socials the collection socials
+    // ensure msg.value is more than _adOffer
+    // calculate new id
+    // ensure collection is not added already
+    // check if collection is ERC 721/1155, exit if not either
+    // calculate ad time
+    // create collection
+    function addListing( string calldata _name, string[] calldata _avatars, address _collectionAddress, uint256 _goingLiveOn, uint256 _mintingOn, uint256 _nftsTotal, string[] calldata _socials ) public {
+        // ensure collection is not added already
+        require( listingIds[_collectionAddress] == 0, "Collection already added" );
+
+        // check if its ERC721 or ERC1155
+        bool is1155 = ERC165Checker.supportsInterface(_collectionAddress, 0xd9b67a26);
+        bool is721 = ERC165Checker.supportsInterface(_collectionAddress, 0x80ac58cd);
+
+        // ensure either ERC721 or ERC1155
+        require( is1155 || is721, "Invalid Collection" );
+
+        // calculate new id
+        totalListings += 1;
+
+        // add collection
+        listings[totalListings] = ListedCollection({
+            collectionAddress: _collectionAddress,
+            goingLiveOn: _goingLiveOn,
+            mintingOn: _mintingOn,
+            nftsTotal: _nftsTotal,
+            status: CollectionStatus.LISTED,
+            is1155: is1155,
+            owner: msg.sender,
+            onAdTill: 0
+        });
+        listingIds[_collectionAddress] = totalListings;
+
+        // emit event
+        emit OnNewListingEvent(
+            totalListings,
+            _name,
+            _avatars,
+            _socials
+        );
+    }
+
+     
+        
 }
