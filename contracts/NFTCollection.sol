@@ -194,7 +194,7 @@ contract NFTCollection is Ownable {
     // check if collection is ERC 721/1155, exit if not either
     // calculate ad time
     // create collection
-    function addListing( string calldata _name, string[] calldata _avatars, address _collectionAddress, uint256 _goingLiveOn, uint256 _mintingOn, uint256 _nftsTotal, string[] calldata _socials ) public {
+    function addListing( string calldata _name, string[] calldata _avatars, address _collectionAddress, uint256 _goingLiveOn, uint256 _mintingOn, uint256 _nftsTotal, string[] calldata _socials ) external payable {
         // ensure collection is not added already
         require( listingIds[_collectionAddress] == 0, "Collection already added" );
 
@@ -244,7 +244,7 @@ contract NFTCollection is Ownable {
     // ensure collection is not added already
     // check if collection is ERC 721/1155, exit if not either
     // create collection
-    function updateListingMetas( uint256 _collectionId, string calldata _name, string[] calldata _avatars, string[] calldata _socials, string[] calldata _tags) external ensureListingExists(_collectionId) onlyListingOwner(_collectionId, msg.sender) returns(bool) {
+    function updateListingMetas( uint256 _collectionId, string calldata _name, string[] calldata _avatars, string[] calldata _socials, string[] calldata _tags) external payable ensureListingExists(_collectionId) onlyListingOwner(_collectionId, msg.sender) returns(bool) {
 
         emit OnListingMetadataChangeEvent(
             _collectionId,
@@ -270,7 +270,7 @@ contract NFTCollection is Ownable {
     // ensure collection is not added already
     // check if collection is ERC 721/1155, exit if not either
     // create collection
-    function updateListing( uint256 _collectionId, address _collectionAddress, uint256 _goingLiveOn, uint256 _mintingOn, uint256 _nftsTotal ) external ensureListingExists(_collectionId) returns(bool) {
+    function updateListing( uint256 _collectionId, address _collectionAddress, uint256 _goingLiveOn, uint256 _mintingOn, uint256 _nftsTotal ) external payable ensureListingExists(_collectionId) returns(bool) {
         // get listing
         ListedCollection storage _collection = listings[_collectionId];
 
