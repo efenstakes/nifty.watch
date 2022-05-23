@@ -435,6 +435,20 @@ contract NFTCollection is Ownable {
 
 
 
+
+    
+    // add withdraw here
+    /// @notice Withdraw msg.sender's eth
+    /// @dev Withdraw msg.sender's eth
+    // check that msg.sender has a balance
+    // subtract their balance
+    // send balance
+    // revert on failure
+    function withdraw() external onlyOwner returns(bool) {
+        Address.sendValue(payable(msg.sender), address(this).balance);
+        return true;
+    }
+
     
 
 
