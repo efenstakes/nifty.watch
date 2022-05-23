@@ -231,5 +231,30 @@ contract NFTCollection is Ownable {
     }
 
      
+            
         
+    /// @notice Update listing Metadata
+    /// @dev Update listing Metadata
+    /// @param _name the collection name
+    /// @param _avatars the collection avatars
+    /// @param _socials the new socials
+    /// @param _tags the new tags
+    // ensure listing exists
+    // calculate new id
+    // ensure collection is not added already
+    // check if collection is ERC 721/1155, exit if not either
+    // create collection
+    function updateListingMetas( uint256 _collectionId, string calldata _name, string[] calldata _avatars, string[] calldata _socials, string[] calldata _tags) external ensureListingExists(_collectionId) onlyListingOwner(_collectionId, msg.sender) returns(bool) {
+
+        emit OnListingMetadataChangeEvent(
+            _collectionId,
+            _name,
+            _avatars,
+            _socials,
+            _tags
+        );
+
+        return true;
+    }
+
 }
