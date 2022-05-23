@@ -17,6 +17,7 @@ dataSources:
         - Collection
         - Wallet
         - Activity
+        - NFT
       abis:
         - name: NFTCollection
           file: ./abis/NFTCollection.json
@@ -52,6 +53,7 @@ dataSources:
         - Collection
         - Wallet
         - Activity
+        - NFT
       abis:
         - name: ERC721
           file: ./abis/ERC721.json
@@ -84,6 +86,7 @@ dataSources:
         - Collection
         - Wallet
         - Activity
+        - NFT
       abis:
         - name: ERC1155
           file: ./abis/ERC1155.json
