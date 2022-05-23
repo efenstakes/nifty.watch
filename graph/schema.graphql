@@ -60,6 +60,19 @@ type Collection @entity {
 
 
 
+type NFT @entity {
+  id: ID!
+
+  tokenURI: String!
+
+  collection: Collection! 
+  tokenID: BigInt!
+
+  owner: Wallet!
+
+  totalOwners: BigInt!
+}
+
 type Wallet @entity {
   id: ID!
 
@@ -69,4 +82,20 @@ type Wallet @entity {
   totalCollectionsListed: Int!
 
   ethInvested: BigInt!
+}
+
+
+enum ActivityType {
+  MINTING,
+  BUY,
+  APPROVAL,
+  APPROVAL_ALL
+}
+
+type Activity @entity {
+  id: ID!
+  collection: Collection! 
+  wallet: Wallet!
+  type: ActivityType!
+  timestamp: BigInt!
 }
