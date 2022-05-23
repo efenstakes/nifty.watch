@@ -134,4 +134,30 @@ contract NFTCollection is Ownable {
 
 
 
+    // constructor
+    constructor() { }
+    
+
+    
+
+    /// @notice Ensure collection listing exists
+    /// @dev Ensure collection listing exists
+    /// @param _nftId the collection id 
+    modifier ensureListingExists(uint256 _nftId) {
+        bool isExistent = (_nftId > 0) && _nftId <= totalListings;
+        require( isExistent , "No Collection" );
+        _;
+    }
+
+    /// @notice Ensure only lister is calling a function
+    /// @dev Ensure only lister is calling a function
+    /// @param _collectionId the collection id 
+    /// @param _owner the owner address
+    modifier onlyListingOwner(uint256 _collectionId, address _owner) {
+        require( listings[_collectionId].owner == _owner, "Only Owner is allowed" );
+        _;
+    }
+    
+
+
 }
