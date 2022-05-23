@@ -333,6 +333,106 @@ contract NFTCollection is Ownable {
     }
      
 
+     
+    
+    /// @notice Put collections on ad
+    /// @dev Put collections on ad
+    /// @param _collectionIds the array of collection ids
+    /// @param _adOffers the array of _adOffers for each collection ids
+    // ensure _collectionIds and _adOffers arrays have same length
+    // ensure enough eth is passed
+    function putOnAdBatch(uint256[] calldata _collectionIds, uint256[] calldata _adOffers) external payable returns(bool) {
+        // ensure _collectionIds and _adOffers arrays have same length
+        require( _collectionIds.length == _adOffers.length, "Array lengths differ" );
+
+        // ensure eth is equal to _adOffers
+        uint256 _totalOffers = 0;
+        for (uint256 index = 0; index < _adOffers.length; index++) {
+            // ensure fee is enough for atleast an hour
+            require( _adOffers[index] > adFee, "Low AdFee" );
+            
+            _totalOffers += _adOffers[index];
+        }
+        
+        // ensure enough eth is passed
+        require( msg.value >= _totalOffers, "No Ad Fee" );
+        
+
+        // ad times for the collections
+        uint256 collectionsTotal = _collectionIds.length;
+        uint256[] memory _adTimes = new uint256[](collectionsTotal);
+
+        for (uint256 index = 0; index < collectionsTotal; index++) {
+            uint256 currentCollectionId = _collectionIds[index];
+
+            // check if collection exists
+            bool isExistent = (currentCollectionId > 0) && currentCollectionId <= totalListings;
+            require( isExistent , "No Collection" );
+
+            // put on ads
+            ( bool success, uint256 newAdTimeTill ) = _putOnAd(_collectionIds[index]);
+            _adTimes[ _adTimes.length ] = newAdTimeTill;
+
+            // ensure success
+            require( success , "Error" );
+        }
+
+        // emit event
+        emit OnAdTimesExtendedEvent( _collectionIds, _adTimes );
+
+        return true;
+    }
+
+        
+    /// @notice Put collection on ad
+    /// @dev Put collection on ad
+    /// @param _collectionId the collection id
+    // ensure eth is passed
+    // put on ads
+    // emit event
+    function putOnAd(uint256 _collectionId) external payable ensureListingExists(_collectionId) returns(bool) {
+        require( msg.value > adFee, "No Ad Fee" );
+
+        ( bool success, uint256 newAdTimeTill ) = _putOnAd(_collectionId);
+
+        // ensure success
+        require( success , "Error" );
+
+        // emit event
+        emit OnAdTimeExtendedEvent(_collectionId, newAdTimeTill);
+
+        return true;
+    }
+
+        
+    /// @notice Put collection on ad
+    /// @dev Put collection on ad
+    /// @param _collectionId the collection id
+    // ensure item exists
+    // get the item
+    // calculate time now
+    function _putOnAd(uint256 _collectionId) internal returns(bool, uint256) {
+        // get the collection
+        ListedCollection storage _collection = listings[_collectionId];
+
+        // calculate time now
+        uint256 paidSeconds = _calculateAdTime(msg.value);
+
+        uint256 newAdTimeTill = 0;
+
+        if ( block.timestamp > _collection.onAdTill ) {
+            newAdTimeTill = _collection.onAdTill + paidSeconds;
+        } else {
+            newAdTimeTill = block.timestamp + paidSeconds;
+        }
+
+        // set the new ad time
+        _collection.onAdTill = newAdTimeTill;
+
+        return (true, newAdTimeTill);
+    }
+
+
 
 
     
