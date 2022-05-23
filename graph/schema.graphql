@@ -76,13 +76,19 @@ type NFT @entity {
   totalOwners: BigInt!
 }
 
+
+
 type Wallet @entity {
   id: ID!
 
   address: Bytes!
 
+  totaNFTsSold: Int!
   totaNFTsOwned: Int!
   totalCollectionsListed: Int!
+
+  totalApprovalsFrom: Int!
+  totalApprovalsTo: Int!
 
   ethInvested: BigInt!
 }
