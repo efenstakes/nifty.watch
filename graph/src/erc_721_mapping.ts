@@ -66,6 +66,54 @@ export function handleTransfer(event: Transfer): void {
 
 
 
+export function handleApproval(event: Approval): void {
+    const erc721 = ERC721.bind(event.address)
+
+    let stats = Stats.load("1")
+
+    if ( !stats ) {
+        stats = newStats()
+    }
+    stats.lastUpdateTime = event.logIndex.plus(event.block.timestamp)
+
+
+    // load nft
+    let nft = NFT.load(event.params.tokenId.toString().concat(event.address.toString()))
+    
+    if( !nft ) {
+        return
+    }
+
+    nft.collection = event.address.toString()
+    nft.tokenId = event.params.tokenId
+    nft.approved = event.params.approved ? event.params.owner.toString() : null
+    nft.tokenURI = erc721.tokenURI(event.params.tokenId)
+
+
+    // load collection
+    let collection = Collection.load(event.address.toString())
+    if( !collection ) {
+        collection = newCollection(event.address.toString())
+    }
+    collection.totalApprovals += event.params.approved ? 1 : 0
+
+    
+    // activity
+    let activity = new Activity(event.params.tokenId.toString().concat(event.address.toString()))
+    activity.timestamp = event.block.timestamp.plus(event.logIndex)
+    activity.collection = event.address.toString()
+    activity.wallet = event.params.owner.toString()
+    activity.type = "APPROVAL"
+
+
+    // save
+    stats.save()
+    nft.save()
+    collection.save()
+    activity.save()
+}
+
+
 export function handleApprovalForAll(event: ApprovalForAll): void {
 
 }
