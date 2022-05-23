@@ -65,6 +65,13 @@ export function handleTransfer(event: Transfer): void {
 
 
 
+
+export function handleApprovalForAll(event: ApprovalForAll): void {
+
+}
+
+
+
 function newNFT(params: Transfer__Params, id: string): NFT {
     let nft = new NFT(id)
 
