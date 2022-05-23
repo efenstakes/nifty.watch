@@ -52,6 +52,7 @@ type Collection @entity {
   # newly added -- add logic to set them
   totalOwners: Int!
   totalSales: Int!
+  totalApprovals: Int!
 
   totalListedNfts: Int!
 
