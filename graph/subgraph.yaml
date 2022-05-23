@@ -35,3 +35,66 @@ dataSources:
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleOwnershipTransferred
       file: ./src/mapping.ts
+
+
+  - kind: ethereum
+    name: ERC721
+    network: ropsten
+    source:
+      abi: ERC721
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Stats
+        - Collection
+        - Wallet
+      abis:
+        - name: ERC721
+          file: ./abis/ERC721.json
+
+      eventHandlers:
+        - event: Transfer(address,address,uint256)
+          handler: handleTransfer
+        
+        - event: Approval(address,bool,uint256)
+          handler: handleApproval
+        
+        - event: ApprovalForAll(address,address,bool)
+          handler: handleApprovalForAll
+
+      file: ./src/erc_721_mapping.ts
+
+
+
+  - kind: ethereum
+    name: ERC1155
+    network: ropsten
+    source:
+      abi: ERC1155
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Stats
+        - Collection
+        - Wallet
+      abis:
+        - name: ERC1155
+          file: ./abis/ERC1155.json
+
+      eventHandlers:
+        - event: TransferSingle(address,address,address,uint256,bytes)
+          handler: handleTransferSingle
+
+        - event: TransferBatch(address,address,address,uint256[],bytes)
+          handler: handleTransferBatch
+                
+        - event: ApprovalForAll(address,address,bool)
+          handler: handleApprovalForAll
+
+      file: ./src/erc_1155_mapping.ts
+
+
