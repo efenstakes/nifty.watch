@@ -160,4 +160,22 @@ contract NFTCollection is Ownable {
     
 
 
+    /// @notice Get ammount of ether in contract
+    /// @dev Get ammount of ether in contract
+    function getEther() public view onlyOwner returns(uint256) {
+        return address(this).balance;
+    }
+
+    
+    /// @notice Set ad fee for an nft
+    /// @dev Set ad fee for an nft
+    /// @param _fee the fee to put an nft on ad
+    function setAdFee(uint256 _fee) public onlyOwner returns(bool) {
+        adFee = _fee;
+        return true;
+    }
+    
+    
+    
+
 }
