@@ -1,0 +1,72 @@
+
+type Stats @entity {
+  id: ID!
+  
+  totalNFTs: BigInt!
+  totalSales: Int!
+  
+  adFee: BigInt!
+  
+  totalCollections: BigInt!
+
+  lastUpdateTime: BigInt!
+}
+
+
+type Collection @entity {
+  # use contract address as the id so NFTs can also create collections 
+  # without having to know the collection id
+  id: ID!
+
+  name: String
+  bgImage: String
+  image: String
+  
+  tags: [String!]!
+  
+  
+  marketID: BigInt
+  address: Bytes
+  
+  lister: Wallet
+
+  onAdTill: BigInt
+  goingLiveOn: BigInt
+  mintingOn: BigInt
+  totalNfts: Int
+
+  # LISTED | DELISTED
+  status: String
+
+  type: String
+  is1155: Boolean
+
+  website: String
+  mintingWebsite: String
+  twitter: String
+  discord: String
+  linkedIn: String
+  socials: [String!]
+
+
+  # newly added -- add logic to set them
+  totalOwners: Int!
+  totalSales: Int!
+
+  totalListedNfts: Int!
+
+  addedOn: BigInt
+}
+
+
+
+type Wallet @entity {
+  id: ID!
+
+  address: Bytes!
+
+  totaNFTsOwned: Int!
+  totalCollectionsListed: Int!
+
+  ethInvested: BigInt!
+}
