@@ -257,4 +257,55 @@ contract NFTCollection is Ownable {
         return true;
     }
 
+    
+        
+    /// @notice Update listing
+    /// @dev Update listing
+    /// @param _collectionAddress the collection contract address
+    /// @param _goingLiveOn the date collection goes live
+    /// @param _mintingOn the date minting starts for collection
+    /// @param _nftsTotal the total nfts in the collection
+    // ensure listing exists
+    // calculate new id
+    // ensure collection is not added already
+    // check if collection is ERC 721/1155, exit if not either
+    // create collection
+    function updateListing( uint256 _collectionId, address _collectionAddress, uint256 _goingLiveOn, uint256 _mintingOn, uint256 _nftsTotal ) external ensureListingExists(_collectionId) returns(bool) {
+        // get listing
+        ListedCollection storage _collection = listings[_collectionId];
+
+        // check if its ERC721 or ERC1155
+        bool is1155 = ERC165Checker.supportsInterface(_collectionAddress, 0xd9b67a26);
+        bool is721 = ERC165Checker.supportsInterface(_collectionAddress, 0x80ac58cd);
+
+        // ensure either ERC721 or ERC1155
+        require( is1155 || is721, "Invalid Collection" );
+
+
+        // reset id for old collection address
+        listingIds[_collection.collectionAddress] = 0;
+
+
+        // set id for new collection
+        listingIds[_collectionAddress] = _collectionId;
+
+
+        // update collection
+        _collection.collectionAddress = _collectionAddress;
+        _collection.goingLiveOn = _goingLiveOn;
+        _collection.mintingOn = _mintingOn;
+        _collection.nftsTotal = _nftsTotal;
+        _collection.is1155 = is1155;
+
+        
+        // emit event
+        emit OnListingChangeEvent(
+            _collectionId,
+            msg.sender,
+            is1155      
+        );
+
+        return true;
+    }
+
 }
