@@ -308,4 +308,28 @@ contract NFTCollection is Ownable {
         return true;
     }
 
+    
+
+        
+    /// @notice Update listing status
+    /// @dev Update listing status
+    /// @param _collectionId the collection id
+    /// @param _status the collection status
+    // ensure listing exists
+    function updateListingStatus( uint256 _collectionId, CollectionStatus _status ) external ensureListingExists(_collectionId) onlyListingOwner(_collectionId, msg.sender) returns(bool) {
+        // get listing
+        ListedCollection storage _collection = listings[_collectionId];
+
+        // update collection
+        _collection.status = _status;
+
+        // emit event
+        emit OnListingStatusChangeEvent(
+            _collectionId,
+            _status    
+        );
+
+        return true;
+    }
+     
 }
