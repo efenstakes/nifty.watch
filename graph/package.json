@@ -6,6 +6,7 @@
     "codegen": "graph codegen",
     "b": "graph build",
     "build": "graph build",
+    "live": "graph deploy --node https://api.thegraph.com/deploy/ efenstakes/nifty-watch",
     "deploy": "graph deploy --node https://api.thegraph.com/deploy/ efenstakes/nifty-watch",
     "create-local": "graph create --node http://localhost:8020/ efenstakes/nifty-watch",
     "remove-local": "graph remove --node http://localhost:8020/ efenstakes/nifty-watch",
