@@ -16,6 +16,7 @@ dataSources:
         - Stats
         - Collection
         - Wallet
+        - Activity
       abis:
         - name: NFTCollection
           file: ./abis/NFTCollection.json
@@ -50,18 +51,19 @@ dataSources:
         - Stats
         - Collection
         - Wallet
+        - Activity
       abis:
         - name: ERC721
           file: ./abis/ERC721.json
 
       eventHandlers:
-        - event: Transfer(address,address,uint256)
+        - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer
         
-        - event: Approval(address,bool,uint256)
+        - event: Approval(indexed address,indexed address,indexed uint256)
           handler: handleApproval
         
-        - event: ApprovalForAll(address,address,bool)
+        - event: ApprovalForAll(indexed address,indexed address,bool)
           handler: handleApprovalForAll
 
       file: ./src/erc_721_mapping.ts
@@ -81,18 +83,19 @@ dataSources:
         - Stats
         - Collection
         - Wallet
+        - Activity
       abis:
         - name: ERC1155
           file: ./abis/ERC1155.json
 
       eventHandlers:
-        - event: TransferSingle(address,address,address,uint256,bytes)
+        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
           handler: handleTransferSingle
 
-        - event: TransferBatch(address,address,address,uint256[],bytes)
+        - event: TransferBatch(indexed address,indexed address,indexed address,uint256[],uint256[])
           handler: handleTransferBatch
                 
-        - event: ApprovalForAll(address,address,bool)
+        - event: ApprovalForAll(indexed address,indexed address,bool)
           handler: handleApprovalForAll
 
       file: ./src/erc_1155_mapping.ts
