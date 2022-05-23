@@ -1,0 +1,37 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: NFTCollection
+    network: ropsten
+    source:
+      address: "0x35b5bEF818c048face6dF0d71f271272A428909C"
+      abi: NFTCollection
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Stats
+        - Collection
+        - Wallet
+      abis:
+        - name: NFTCollection
+          file: ./abis/NFTCollection.json
+      eventHandlers:
+        - event: OnAdTimeExtendedEvent(indexed uint256,uint256)
+          handler: handleOnAdTimeExtendedEvent
+        - event: OnAdTimesExtendedEvent(indexed uint256[],uint256[])
+          handler: handleOnAdTimesExtendedEvent
+        - event: OnListingChangeEvent(uint256,address,bool)
+          handler: handleOnListingChangeEvent
+        - event: OnListingMetadataChangeEvent(uint256,string,string[],string[],string[])
+          handler: handleOnListingMetadataChangeEvent
+        - event: OnListingStatusChangeEvent(indexed uint256,uint8)
+          handler: handleOnListingStatusChangeEvent
+        - event: OnNewListingEvent(uint256,string,string[],string[])
+          handler: handleOnNewListingEvent
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+      file: ./src/mapping.ts
