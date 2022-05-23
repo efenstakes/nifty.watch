@@ -46,6 +46,25 @@ export function handleTransfer(event: Transfer): void {
     collection.totalSales += 1
 
 
+    // buyer
+    let buyer = Wallet.load(event.params.to.toString())
+
+    if( !buyer ) {
+        buyer = newWallet(event.params.to.toString())
+    }
+    buyer.totaNFTsOwned += 1
+
+    
+    // seller
+    let seller = Wallet.load(event.params.from.toString())
+
+    if( !seller ) {
+        seller = newWallet(event.params.from.toString())
+    }
+    seller.totaNFTsSold += 1
+
+
+
     // activity
     let activity = new Activity(event.params.tokenId.toString().concat(event.address.toString()))
     activity.timestamp = event.block.timestamp.plus(event.logIndex)
@@ -59,10 +78,10 @@ export function handleTransfer(event: Transfer): void {
     nft.save()
     collection.save()
     activity.save()
+
+    buyer.save()
+    seller.save()
 }
-
-
-
 
 
 
@@ -95,7 +114,24 @@ export function handleApproval(event: Approval): void {
     if( !collection ) {
         collection = newCollection(event.address.toString())
     }
-    collection.totalApprovals += event.params.approved ? 1 : 0
+    collection.totalApprovals += 1
+
+
+    // owner
+    let owner = Wallet.load(event.params.owner.toString())
+
+    if( !owner ) {
+        owner = newWallet(event.params.owner.toString())
+    }
+    owner.totalApprovalsFrom += 1
+
+    // approvee
+    let approvee = Wallet.load(event.params.approved.toString())
+
+    if( !approvee ) {
+        approvee = newWallet(event.params.approved.toString())
+    }
+    approvee.totalApprovalsTo += 1
 
     
     // activity
@@ -111,6 +147,8 @@ export function handleApproval(event: Approval): void {
     nft.save()
     collection.save()
     activity.save()
+    owner.save()
+    approvee.save()
 }
 
 
@@ -119,6 +157,20 @@ export function handleApprovalForAll(event: ApprovalForAll): void {
 }
 
 
+
+
+function newWallet(id: string): Wallet {
+    let wallet = new Wallet(id)
+
+    wallet.totaNFTsOwned = 0
+    wallet.totaNFTsSold = 0
+    wallet.totalApprovalsTo = 0
+    wallet.totalApprovalsFrom = 0
+    wallet.totalCollectionsListed = 0
+    wallet.ethInvested = new BigInt(0)
+
+    return wallet
+}
 
 function newNFT(params: Transfer__Params, id: string): NFT {
     let nft = new NFT(id)
