@@ -59,4 +59,79 @@ contract NFTCollection is Ownable {
 
 
 
+
+    // events
+    
+
+    /// @notice Event emitted when a collection is listed
+    /// @dev Event emitted when a collection is listed
+    /// @param marketID the collection id in the market
+    /// @param name the collection name
+    /// @param avatars the collection avatar
+    /// @param socials the collection socials
+    event OnNewListingEvent(
+        uint256 marketID,
+        string name,
+        string[] avatars,
+        string[] socials
+    );
+    
+
+    /// @notice Event emitted when a collection is listed
+    /// @dev Event emitted when a collection is listed
+    /// @param marketID the collection id in the market
+    /// @param owner the nft collection lister's address
+    /// @param is1155 if collection type is ERC1155 or ERC721
+    event OnListingChangeEvent(
+        uint256 marketID,
+        address owner,
+        bool is1155      
+    );
+
+
+    /// @notice Event emitted when a collection metadata is updated
+    /// @dev Event emitted when a collection metadata is updated
+    /// @param name the collection name
+    /// @param avatars the collection avatars
+    /// @param socials the collection socials
+    /// @param tags the collection tags
+    event OnListingMetadataChangeEvent(
+        uint256 marketID,
+        string name,
+        string[] avatars,
+        string[] socials,
+        string[] tags
+    );
+
+    
+    /// @notice Event when collection status is updated
+    /// @dev Event when collection status is updated
+    /// @param marketID the collection id in the market
+    /// @param status the new collection status
+    event OnListingStatusChangeEvent(
+        uint256 indexed marketID,
+        CollectionStatus status
+    );
+
+
+    /// @notice Event emitted when collection ad time is extended
+    /// @dev Event emitted when collection ad time is extended
+    /// @param marketID the collection id in the market
+    /// @param newAdTimeTill the new ad time end
+    event OnAdTimeExtendedEvent(
+        uint256 indexed marketID,
+        uint256 newAdTimeTill
+    );
+
+    /// @notice Event emitted when collection ad time is extended
+    /// @dev Event emitted when collection ad time is extended
+    /// @param marketIDs the collection id in the market
+    /// @param newAdTimesTill the new ad time end
+    event OnAdTimesExtendedEvent(
+        uint256[] indexed marketIDs,
+        uint256[] newAdTimesTill
+    );
+
+
+
 }
