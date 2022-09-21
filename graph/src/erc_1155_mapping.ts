@@ -38,7 +38,13 @@ export function handleTransferSingle(event: TransferSingle): void {
     nft.tokenId = event.params.id
     nft.approved = null
     nft.owner = event.params.to.toString()
-    nft.tokenURI = erc1155.uri(event.params.id)
+
+    // nft.tokenURI = erc1155.uri(event.params.id)
+    let nftURIResult = erc1155.try_uri(event.params.id)
+
+    if( !nftURIResult.reverted ) {
+        nft.tokenURI = nftURIResult.value
+    }
 
     
     // load collection
@@ -123,8 +129,13 @@ export function handleTransferBatch(event: TransferBatch): void {
         nft.tokenId = tokenId
         nft.approved = null
         nft.owner = event.params.to.toString()
-        nft.tokenURI = erc1155.uri(tokenId)
 
+        // nft.tokenURI = erc1155.uri(tokenId)
+        let nftURIResult = erc1155.try_uri(tokenId)
+
+        if( !nftURIResult.reverted ) {
+            nft.tokenURI = nftURIResult.value
+        }
         
         // load collection
         let collection = Collection.load(event.address.toString())
