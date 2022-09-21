@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "c": "npx hardhat compile --show-stack-traces",
-    "live": "npx hardhat run ./scripts/deploy.js --network ropsten"
+    "live": "npx hardhat run ./scripts/deploy.js --network goerli"
   },
   "dependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.5",
