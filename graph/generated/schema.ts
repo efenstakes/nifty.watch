@@ -506,7 +506,6 @@ export class NFT extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
-    this.set("tokenURI", Value.fromString(""));
     this.set("collection", Value.fromString(""));
     this.set("tokenId", Value.fromBigInt(BigInt.zero()));
     this.set("owner", Value.fromString(""));
@@ -538,13 +537,21 @@ export class NFT extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get tokenURI(): string {
+  get tokenURI(): string | null {
     let value = this.get("tokenURI");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
   }
 
-  set tokenURI(value: string) {
-    this.set("tokenURI", Value.fromString(value));
+  set tokenURI(value: string | null) {
+    if (!value) {
+      this.unset("tokenURI");
+    } else {
+      this.set("tokenURI", Value.fromString(<string>value));
+    }
   }
 
   get collection(): string {
