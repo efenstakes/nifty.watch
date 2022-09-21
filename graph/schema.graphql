@@ -64,7 +64,7 @@ type Collection @entity {
 type NFT @entity {
   id: ID!
 
-  tokenURI: String!
+  tokenURI: String
 
   collection: Collection! 
   tokenId: BigInt!
@@ -98,7 +98,8 @@ enum ActivityType {
   MINTING,
   BUY,
   APPROVAL,
-  APPROVAL_ALL
+  APPROVAL_ALL,
+  TRANSFER,
 }
 
 type Activity @entity {
