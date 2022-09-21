@@ -33,6 +33,10 @@ module.exports = {
     //   accounts:
     //     process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     // },
+    goerli: {
+      url: `https://eth-goerli.g.alchemy.com/v2/${process.env.GOERLI_PRIVATE_KEY}`,
+      accounts: { mnemonic: process.env.MNEMONIC }
+    },
     ropsten: {
       url: `https://ropsten.infura.io/v3/${process.env.ROPSTEN_PROJECT_ID}`,
       accounts: { mnemonic: process.env.MNEMONIC }
