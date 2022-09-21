@@ -23,53 +23,59 @@ export function handleTransfer(event: Transfer): void {
     }
     stats.lastUpdateTime = event.logIndex.plus(event.block.timestamp)
 
+    log.info("handleTransfer event.params.tokenId ", [ event.params.tokenId.toString() ])
 
     // load nft
-    let nft = NFT.load(event.params.tokenId.toString().concat(event.address.toString()))
+    let nft = NFT.load(event.params.tokenId.toString().concat(event.address.toHexString()))
     
     if( !nft ) {
-        nft = newNFT(event.params, event.params.tokenId.toString().concat(event.address.toString()))
+        nft = newNFT(event.params, event.params.tokenId.toString().concat(event.address.toHexString()))
     }
 
-    nft.collection = event.address.toString()
+    nft.collection = event.address.toHexString()
     nft.tokenId = event.params.tokenId
     nft.approved = null
-    nft.owner = event.params.to.toString()
-    nft.tokenURI = erc721.tokenURI(event.params.tokenId)
+    nft.owner = event.params.to.toHexString()
+
+    let nftURIResult = erc721.try_tokenURI(event.params.tokenId)
+
+    if( !nftURIResult.reverted ) {
+        nft.tokenURI = nftURIResult.value
+    }
 
     // load collection
-    let collection = Collection.load(event.address.toString())
+    let collection = Collection.load(event.address.toHexString())
     if( !collection ) {
-        collection = newCollection(event.address.toString())
+        collection = newCollection(event.address.toHexString())
     }
 
     collection.totalSales += 1
 
 
     // buyer
-    let buyer = Wallet.load(event.params.to.toString())
+    let buyer = Wallet.load(event.params.to.toHexString())
 
     if( !buyer ) {
-        buyer = newWallet(event.params.to.toString())
+        buyer = newWallet(event.params.to.toHexString())
     }
     buyer.totaNFTsOwned += 1
 
     
     // seller
-    let seller = Wallet.load(event.params.from.toString())
+    let seller = Wallet.load(event.params.from.toHexString())
 
     if( !seller ) {
-        seller = newWallet(event.params.from.toString())
+        seller = newWallet(event.params.from.toHexString())
     }
     seller.totaNFTsSold += 1
 
 
 
     // activity
-    let activity = new Activity(event.params.tokenId.toString().concat(event.address.toString()))
+    let activity = new Activity(event.params.tokenId.toString().concat(event.address.toHexString()))
     activity.timestamp = event.block.timestamp.plus(event.logIndex)
-    activity.collection = event.address.toString()
-    activity.wallet = event.params.to.toString()
+    activity.collection = event.address.toHexString()
+    activity.wallet = event.params.to.toHexString()
     activity.type = event.address === event.params.from ? "MINTING" : "TRANSFER"
 
 
@@ -97,48 +103,52 @@ export function handleApproval(event: Approval): void {
 
 
     // load nft
-    let nft = NFT.load(event.params.tokenId.toString().concat(event.address.toString()))
+    let nft = NFT.load(event.params.tokenId.toString().concat(event.address.toHexString()))
     
     if( !nft ) {
         return
     }
 
-    nft.collection = event.address.toString()
+    nft.collection = event.address.toHexString()
     nft.tokenId = event.params.tokenId
-    nft.approved = event.params.approved ? event.params.owner.toString() : null
-    nft.tokenURI = erc721.tokenURI(event.params.tokenId)
+    nft.approved = event.params.approved ? event.params.owner.toHexString() : null
+    
+    let nftURIResult = erc721.try_tokenURI(event.params.tokenId)
 
+    if( !nftURIResult.reverted ) {
+        nft.tokenURI = nftURIResult.value
+    }
 
     // load collection
-    let collection = Collection.load(event.address.toString())
+    let collection = Collection.load(event.address.toHexString())
     if( !collection ) {
-        collection = newCollection(event.address.toString())
+        collection = newCollection(event.address.toHexString())
     }
     collection.totalApprovals += 1
 
 
     // owner
-    let owner = Wallet.load(event.params.owner.toString())
+    let owner = Wallet.load(event.params.owner.toHexString())
 
     if( !owner ) {
-        owner = newWallet(event.params.owner.toString())
+        owner = newWallet(event.params.owner.toHexString())
     }
     owner.totalApprovalsFrom += 1
 
     // approvee
-    let approvee = Wallet.load(event.params.approved.toString())
+    let approvee = Wallet.load(event.params.approved.toHexString())
 
     if( !approvee ) {
-        approvee = newWallet(event.params.approved.toString())
+        approvee = newWallet(event.params.approved.toHexString())
     }
     approvee.totalApprovalsTo += 1
 
     
     // activity
-    let activity = new Activity(event.params.tokenId.toString().concat(event.address.toString()))
+    let activity = new Activity(event.params.tokenId.toString().concat(event.address.toHexString()))
     activity.timestamp = event.block.timestamp.plus(event.logIndex)
-    activity.collection = event.address.toString()
-    activity.wallet = event.params.owner.toString()
+    activity.collection = event.address.toHexString()
+    activity.wallet = event.params.owner.toHexString()
     activity.type = "APPROVAL"
 
 
